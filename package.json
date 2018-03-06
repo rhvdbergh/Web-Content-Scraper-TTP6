@@ -26,7 +26,6 @@
     "dependencies": {
         "csv": "^2.0.0",
         "jsdom": "^11.6.2",
-        "rimraf": "^2.6.2",
-        "website-scraper": "^3.3.2"
+        "scrape-it": "^5.0.2"
     }
 }

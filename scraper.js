@@ -1,19 +1,9 @@
 const fs = require('fs');
-const rimraf = require('rimraf'); // to remove folder with content, = command line rm -rf command
 const csv = require('csv');
-const scraper = require('website-scraper');
 const jsdom = require('jsdom'); // create a virtaul DOM to traverse
 const { JSDOM } = jsdom; // constructor for jsdom
 
-// options for the scraper
-const scraperOptions = {
-    urls: ['http://shirts4mike.com/shirts.php'],
-    directory: './html'
-        // the following can be added to make the scraper recursive
-        // recursive: true,
-        // maxRecursiveDepth: '1',
-        // maxDepth: '1' 
-}
+const scrapeIt = require('scrape-it');
 
 // check if there is a data folder; if not, create one
 function checkForDataFolder() {
@@ -22,17 +12,29 @@ function checkForDataFolder() {
     }
 }
 
+// using the npm scrape-it module
+// using the arguments passed to the scraper, the scraper returns
+// the href attribute of all the <a> elements in <li>sts in the <ul> with a 
+// class name of .products, in the format {shirts: [{url: url1}, {url: url2}, etc.]}
 function scrapeSite() {
-    rimraf.sync('./html'); // remove the directory in which the scraped html will be stored
-
-    scraper(scraperOptions, (error, result) => {
-
-        const dom = new JSDOM(result[0].text); // create a new DOM with jsdom
-        list = dom.window.document.getElementsByClassName('products'); // traverse the dom
-        console.log(list[0].innerHTML); // and this is the result!
-    });
+    scrapeIt('http://shirts4mike.com/shirts.php', {
+            shirts: {
+                listItem: ".products li a",
+                data: {
+                    url: {
+                        attr: "href"
+                    }
+                }
+            }
+        }, // next follows a callback function for the scraper
+        (error, data) => {
+            if (error) {
+                console.log('there was an error!');
+            } else {
+                console.log(data.data);
+            }
+        })
 }
-
 
 // INITIAL SETUP
 checkForDataFolder();
