@@ -139,7 +139,17 @@ function scrapeSite() {
         });
 }
 
-// INITIAL SETUP
+// ON START
+
+// run program on startup
 console.log('Scraper app started ...');
 checkForDataFolder();
 scrapeSite();
+
+// repeat execution at intervals of one day ( = 86400000ms )
+setInterval(() => {
+
+    checkForDataFolder();
+    scrapeSite();
+
+}, 86400000); // run once each day
