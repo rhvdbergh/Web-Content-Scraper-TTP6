@@ -22,13 +22,22 @@ function checkForDataFolder() {
 
 // converts the array of scraped data objects into a CSV file and saves it to the ./data folder
 function writeToCSV() {
+
+    // convert the JSON object infoForAllShirts to csv format
     try {
         const csv = json2csv(infoForAllShirts, json2csvOptions);
-        console.log(csv);
+
+        // write csv to a file with the date in the format yyyy-mm-dd.csv in the ./data folder
+        const date = new Date();
+        let fileDate = `${date.getFullYear()}-${convertToTwoDigits(date.getMonth() + 1)}-${convertToTwoDigits(date.getDate())}`; // getMonth() is zero indexed, and getDate() returns day of month
+
+        fs.writeFile(`./data/${fileDate}.csv`, csv, (error) => {
+            if (error) throw (error);
+            console.log('CSV file successfully saved!');
+        })
     } catch (error) {
         console.error(error);
     }
-
 }
 
 // returns a string with 0 in front if a single digit is passed in
