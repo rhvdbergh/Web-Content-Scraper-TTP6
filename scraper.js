@@ -1,6 +1,8 @@
 const fs = require('fs');
-const csv = require('csv');
 const scrapeIt = require('scrape-it'); // web scraper module
+const json2csv = require('json2csv').parse;
+const fields = ['title', 'price', 'imageURL', 'link', 'time']; // column headings and fields to parse to CSV
+
 
 let infoForAllShirts = []; // holds all the objects with info associated with each shirt product page
 let remainingShirtsToScrape = 0; // holds the number of shirts to scrape, counts down as the data returns, when 0, all links returned
@@ -13,7 +15,21 @@ function checkForDataFolder() {
 }
 
 // converts the array of scraped data objects into a CSV file and saves it to the ./data folder
-function writeToCSV() {}
+function writeToCSV() {
+    for (let i = 0; i < infoForAllShirts.length; i++) {
+        console.log(infoForAllShirts[i].time);
+    }
+
+}
+
+// returns a string with 0 in front if a single digit is passed in
+function convertToTwoDigits(number) {
+    if (number < 10) {
+        return '0' + number;
+    } else {
+        return '' + number; // '' added to return a string
+    }
+}
 
 // scrapes the webpage of an individual shirt for price etc.
 // Scrape the product title, price, imageURL
@@ -57,8 +73,9 @@ function scrapeIndividualShirt(link) {
 
                 // date and time when scraped
                 const date = new Date();
+                const time = `${date.getHours()}:${convertToTwoDigits(date.getMinutes())}`;
 
-                infoForAllShirts.push({ title, price, imageURL, link, date });
+                infoForAllShirts.push({ title, price, imageURL, link, time });
                 remainingShirtsToScrape -= 1;
                 if (remainingShirtsToScrape === 0) { // this is the last link to return data
                     console.log(`Data for all ${infoForAllShirts.length} shirts retrieved successfully ...`)
