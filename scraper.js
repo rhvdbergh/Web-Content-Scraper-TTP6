@@ -1,12 +1,9 @@
 const fs = require('fs');
 const csv = require('csv');
-const jsdom = require('jsdom'); // create a virtaul DOM to traverse
-const { JSDOM } = jsdom; // constructor for jsdom
-
-const scrapeIt = require('scrape-it');
+const scrapeIt = require('scrape-it'); // web scraper module
 
 let infoForAllShirts = []; // holds all the objects with info associated with each shirt product page
-
+let remainingShirtsToScrape = 0; // holds the number of shirts to scrape, counts down as the data returns, when 0, all links returned
 
 // check if there is a data folder; if not, create one
 function checkForDataFolder() {
@@ -14,6 +11,9 @@ function checkForDataFolder() {
         fs.mkdirSync('./data');
     }
 }
+
+// converts the array of scraped data objects into a CSV file and saves it to the ./data folder
+function writeToCSV() {}
 
 // scrapes the webpage of an individual shirt for price etc.
 // Scrape the product title, price, imageURL
@@ -59,10 +59,13 @@ function scrapeIndividualShirt(link) {
                 const date = new Date();
 
                 infoForAllShirts.push({ title, price, imageURL, link, date });
+                remainingShirtsToScrape -= 1;
+                if (remainingShirtsToScrape === 0) { // this is the last link to return data
+                    console.log(`Data for all ${infoForAllShirts.length} shirts retrieved successfully ...`)
+                    writeToCSV();
+                }
             }
-
         });
-
 }
 
 // using the npm scrape-it module
@@ -85,25 +88,23 @@ function scrapeSite() {
             if (error) {
                 console.log('there was an error!', error);
             } else {
-                // console.log(data.data); // for debugging
+                // get the number of shirts to be scraped
+                // remainingShirtsToScrape will count down as the links to individual shirts return data
+                remainingShirtsToScrape = data.data.shirts.length;
                 // traverse the data.data object to extract links to individual shirt
                 // pages, and then assign to array
-                //shirts[0][0].url
+                //shirts[0].url
                 for (let i = 0; i < data.data.shirts.length; i++) {
                     // the url returned does not include the domain name
                     // so add the two together, then scrape info from the individual shirt product page
                     linksToIndividualShirts[i] = "http://shirts4mike.com/" + data.data.shirts[i].url;
                     scrapeIndividualShirt(linksToIndividualShirts[i]);
                 }
-
-                // console.dir(infoForAllShirts);
-
             }
         });
 }
 
 // INITIAL SETUP
+console.log('Scraper app started ...');
 checkForDataFolder();
 scrapeSite();
-
-setTimeout(() => console.log(infoForAllShirts), 10000);
