@@ -13,6 +13,26 @@ const json2csvOptions = { fields };
 let infoForAllShirts = []; // holds all the objects with info associated with each shirt product page
 let remainingShirtsToScrape = 0; // holds the number of shirts to scrape, counts down as the data returns, when 0, all links returned
 
+// prints error to console and appends error to log file
+function handleError(error) {
+
+    if (error.message.includes('ENOTFOUND')) {
+        console.error('There was a problem connecting with the server. Please check whether you are connected to the internet, and whether http://shirts4mike.com is online.');
+
+    } else {
+        console.error(error);
+    }
+
+    // date and time on which error occurred
+    const date = new Date();
+    const errorDate = date.toString();
+
+    // write the error to a log file
+    fs.appendFile('./scraper-error.log', errorDate + ': ' + error + '\n', (error) => {
+        if (error) throw (error);
+    });
+}
+
 // check if there is a data folder; if not, create one
 function checkForDataFolder() {
     if (!(fs.existsSync('./data'))) {
@@ -36,7 +56,7 @@ function writeToCSV() {
             console.log('CSV file successfully saved!');
         })
     } catch (error) {
-        console.error(error);
+        handleError(error);
     }
 }
 
@@ -71,7 +91,7 @@ function scrapeIndividualShirt(link) {
         }, // next follows a callback function for the scraper
         (error, data) => {
             if (error) {
-                console.log('there was an error!', error);
+                handleError(error);
             } else {
 
                 const result = data.data;
@@ -121,7 +141,7 @@ function scrapeSite() {
         }, // next follows a callback function for the scraper
         (error, data) => {
             if (error) {
-                console.log('there was an error!', error);
+                handleError(error);
             } else {
                 // get the number of shirts to be scraped
                 // remainingShirtsToScrape will count down as the links to individual shirts return data
