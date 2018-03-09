@@ -1,8 +1,14 @@
 const fs = require('fs');
 const scrapeIt = require('scrape-it'); // web scraper module
 const json2csv = require('json2csv').parse;
-const fields = ['title', 'price', 'imageURL', 'link', 'time']; // column headings and fields to parse to CSV
-
+const fields = [
+        { label: 'Title', value: 'title' },
+        { label: 'Price', value: 'price' },
+        { label: 'Image URL', value: 'imageURL' },
+        { label: 'URL', value: 'link' },
+        { label: 'Time', value: 'time' }
+    ] // column headings and fields to parse to CSV
+const json2csvOptions = { fields };
 
 let infoForAllShirts = []; // holds all the objects with info associated with each shirt product page
 let remainingShirtsToScrape = 0; // holds the number of shirts to scrape, counts down as the data returns, when 0, all links returned
@@ -16,8 +22,11 @@ function checkForDataFolder() {
 
 // converts the array of scraped data objects into a CSV file and saves it to the ./data folder
 function writeToCSV() {
-    for (let i = 0; i < infoForAllShirts.length; i++) {
-        console.log(infoForAllShirts[i].time);
+    try {
+        const csv = json2csv(infoForAllShirts, json2csvOptions);
+        console.log(csv);
+    } catch (error) {
+        console.error(error);
     }
 
 }
