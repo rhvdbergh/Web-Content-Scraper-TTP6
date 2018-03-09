@@ -2,3 +2,4 @@
 /node_modules
 /html
 package-lock.json
+scraper-error.log
