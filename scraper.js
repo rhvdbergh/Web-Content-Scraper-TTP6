@@ -113,7 +113,11 @@ function scrapeIndividualShirt(link) {
                 const date = new Date();
                 const time = `${date.getHours()}:${convertToTwoDigits(date.getMinutes())}`;
 
+                // add to the object array that contains data for all shirts
                 infoForAllShirts.push({ title, price, imageURL, link, time });
+
+                // another shirt done - counting down to 0, when the data of all shirts will be scraped
+                // this is to allow asynchronous scraping
                 remainingShirtsToScrape -= 1;
                 if (remainingShirtsToScrape === 0) { // this is the last link to return data
                     console.log(`Data for all ${infoForAllShirts.length} shirts retrieved successfully ...`)

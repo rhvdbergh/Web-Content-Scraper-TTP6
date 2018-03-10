@@ -25,7 +25,7 @@
     "homepage": "https://github.com/rhvdbergh/treehouse_techdegree_project_6#readme",
     "dependencies": {
         "csv": "^2.0.0",
-        "json2csv": "^4.0.1",
+        "jsdom": "^11.6.2",
         "scrape-it": "^5.0.2"
     }
 }
